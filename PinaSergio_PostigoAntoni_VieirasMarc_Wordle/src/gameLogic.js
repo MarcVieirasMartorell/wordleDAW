@@ -15,6 +15,8 @@ export async function fetchTargetCharacter() {
   }
 }
 
+
+
 export function compareAttributes(guess, target) {
   const feedback = [];
   const keys = ["name", "gender", "game", "origin", "race", "type"];
