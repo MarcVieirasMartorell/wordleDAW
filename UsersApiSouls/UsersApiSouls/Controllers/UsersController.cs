@@ -33,7 +33,35 @@ public static class UserEndpoints
         .WithName("GetUserById")
         .WithOpenApi();
 
-        group.MapPut("/{id}", async Task<Results<Ok, NotFound>> (int userid, User user, UserssoulsContext db) =>
+
+            group.MapPut("/{userid}/updateCoins", async Task<Results<Ok<User>, NotFound>> (int userid, int newCoinAmount, UserssoulsContext db) =>
+            {
+                // Buscar al usuario por su ID
+                var user = await db.Users.FirstOrDefaultAsync(u => u.UserId == userid);
+
+                // Si el usuario no existe, devolver NotFound
+                if (user == null)
+                {
+                    return TypedResults.NotFound();
+                }
+
+                // Actualizar solo las monedas (soulsCoin)
+                user.SoulsCoin = newCoinAmount;
+
+                // Guardar los cambios en la base de datos
+                await db.SaveChangesAsync();
+
+                // Devolver respuesta exitosa con el usuario actualizado
+                return TypedResults.Ok(user);  // Devuelve el usuario actualizado
+            })
+ .WithName("UpdateUserCoins")
+ .WithOpenApi();
+
+
+
+
+
+            group.MapPut("/{id}", async Task<Results<Ok, NotFound>> (int userid, User user, UserssoulsContext db) =>
         {
             var affected = await db.Users
                 .Where(model => model.UserId == userid)
